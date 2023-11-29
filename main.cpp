@@ -55,7 +55,7 @@ int main() {
     int mode, algorithm;
     string startPoint, endPoint; //Stored as addresses?
 
-    // Title
+    // Title + style
     string authors = "Designed by Camila Djurinsky Zapolski, Pietro Landell, and Ethan Wilson";
     cout << setw((80 + string("Shortest Path Finder").length()) / 2) << "Shortest Path Finder" << endl;
     cout << setw((80 + authors.length()) / 2) << authors << endl;
@@ -65,12 +65,14 @@ int main() {
     getSearchAlgorithm(algorithm);
     getStartAndEndPoints(startPoint, endPoint);
 
+    /*
     // For test/debug
     cout << endl;
     cout << "Here's the following inputs:" << endl;
     cout << "Mode: " << mode << endl << "Algorithm: " << algorithm << endl;
     cout << "Start Point: " << startPoint << endl << "End Point: " << endPoint << endl;
     cout << endl;
+    */
 
     cout << "Finding the shortest path..." << endl;
 
