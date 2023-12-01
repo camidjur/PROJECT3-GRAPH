@@ -4,40 +4,38 @@
 
 using namespace std;
 
-void getTransportationMode(int &mode) {
-    while (true) {
-        cout << "Select Transportation Mode:" << endl;
-        cout << "1. Walking" << endl;
-        cout << "2. Biking" << endl;
-        cout << "3. Car" << endl;
-        cout << "4. Public Transportation" << endl;
-        cout << "Enter your choice: ";
-        cin >> mode;
+int getTransportationMode() {
+    int mode = 0;
+    cout << "Select Transportation Mode:" << endl;
+    cout << "1. Walking" << endl;
+    cout << "2. Biking" << endl;
+    cout << "3. Car" << endl;
+    cout << "4. Public Transportation" << endl;
+    cout << "Enter your choice: ";
+    cin >> mode;
 
-        if (mode >= 1 && mode <= 4) {
-            break; // Valid input, break the loop
-        } else {
-            cout << "Invalid choice. Please try again." << endl;
-        }
+    if (mode >= 1 && mode <= 4) {
+        return mode; // Valid input, break the loop
+    } else {
+        cout << "Invalid choice. Please try again." << endl;
+        return getTransportationMode();
     }
-    cout << endl;
 }
 
-void getSearchAlgorithm(int &algorithm) {
-    while (true) {
-        cout << "Choose Search Algorithm:" << endl;
-        cout << "1. Depth First Search" << endl;
-        cout << "2. Dijkstra’s Search" << endl;
-        cout << "Enter your choice: ";
-        cin >> algorithm;
+int getSearchAlgorithm() {
+    int algorithm;
+    cout << "Choose Search Algorithm:" << endl;
+    cout << "1. Depth First Search" << endl;
+    cout << "2. Dijkstra’s Search" << endl;
+    cout << "Enter your choice: ";
+    cin >> algorithm;
 
-        if (algorithm == 1 || algorithm == 2) {
-            break; // Valid input, break the loop
-        } else {
-            cout << "Invalid choice. Please try again." << endl;
-        }
+    if (algorithm == 1 || algorithm == 2) {
+        return algorithm; // Valid input, break the loop
+    } else {
+        cout << "Invalid choice. Please try again." << endl;
+        return getSearchAlgotithm();
     }
-    cout << endl;
 }
 
 void getStartAndEndPoints(string &startPoint, string &endPoint) {
@@ -61,8 +59,8 @@ int main() {
     cout << setw((80 + authors.length()) / 2) << authors << endl;
     cout << endl;
 
-    getTransportationMode(mode);
-    getSearchAlgorithm(algorithm);
+    mode = getTransportationMode();
+    algorithm = getSearchAlgorithm();
     getStartAndEndPoints(startPoint, endPoint);
 
     /*
