@@ -25,7 +25,7 @@ int getTransportationMode() {
 int getSearchAlgorithm() {
     int algorithm;
     cout << "Choose Search Algorithm:" << endl;
-    cout << "1. Depth First Search" << endl;
+    cout << "1. Bellman Ford's Search" << endl;
     cout << "2. Dijkstra’s Search" << endl;
     cout << "Enter your choice: ";
     cin >> algorithm;
