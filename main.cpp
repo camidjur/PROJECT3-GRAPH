@@ -34,7 +34,7 @@ int getSearchAlgorithm() {
         return algorithm; // Valid input, break the loop
     } else {
         cout << "Invalid choice. Please try again." << endl;
-        return getSearchAlgotithm();
+        return getSearchAlgorithm();
     }
 }
 
