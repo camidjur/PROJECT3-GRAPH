@@ -49,17 +49,17 @@ pair<double, double> getCoordinates(const string &address, const string &apiKey)
     curl = curl_easy_init();
     if(curl) {
         // Sets the options for the curl session which are the URL, the function to handle the response which is (WriteCallback),
-        // and a pointer to a string where the response is stored.
+        // and a pointer to a string where the response is stored
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-        // Performs the HTTP request, data is stored in readBuffer.
+        // Performs the HTTP request, data is stored in readBuffer
         res = curl_easy_perform(curl);
-        // Cleans up the curl session.
+        // Cleans up the curl session
         curl_easy_cleanup(curl);
 
-        // Checks if the request was performed successfully.
+        // Checks if the request was performed successfully
         if (res != CURLE_OK) {
             // If there was an error, return the default coords
             cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
@@ -67,25 +67,25 @@ pair<double, double> getCoordinates(const string &address, const string &apiKey)
         }
 
         try {
-            // Scans the JSON response to extract the latitude and longitude.
-            // The JSON response is expected to be in a specific format returned by LocationIQ.
+            // Searches the JSON response to find "lat" & "lon" and returns them
+            // The JSON response is in a specific format defined by LocationIQ
             auto jsonResponse = json::parse(readBuffer);
             string latString = jsonResponse.at(0).at("lat").get<string>();
             string lonString = jsonResponse.at(0).at("lon").get<string>();
 
-            // Convert the latitude and longitude from string to double.
+            // Convert the latitude and longitude from string to double
             double latitude = stod(latString);
             double longitude = stod(lonString);
 
-            // Return the coordinates as a pair of doubles.
+            // Return the coords as a pair of doubles.
             return make_pair(latitude, longitude);
         } catch (const json::exception& e) {
-            // If there was an error in parsing the JSON response, output it and return default coordinates.
+            // If there was an error in searching the JSON response, output it and return default coords
             cerr << "JSON parsing error: " << e.what() << endl;
             return make_pair(0.0, 0.0);
         }
     }
-    // If curl initialization fails, return default coordinates.
+    // If curl initialization fails, return default coordinates
     return make_pair(0.0, 0.0);
 }
 
@@ -129,12 +129,11 @@ int getTransportationMode() {
     cin >> mode;
 
     if (mode >= 1 && mode <= 4) {
-        return mode; // Valid input, break the loop
+        return mode;
     } else {
         cout << "Invalid choice. Please try again." << endl;
         return getTransportationMode();
     }
-    cout << endl;
 }
 
 int getSearchAlgorithm() {
@@ -146,7 +145,7 @@ int getSearchAlgorithm() {
     cin >> algorithm;
 
     if (algorithm == 1 || algorithm == 2) {
-        return algorithm; // Valid input, break the loop
+        return algorithm; // Valid input
     } else {
         cout << "Invalid choice. Please try again." << endl;
         return getSearchAlgorithm();
@@ -154,23 +153,9 @@ int getSearchAlgorithm() {
     cout << endl;
 }
 
-// Old Function
-/*
-void getStartAndEndPoints(string &startPoint, string &endPoint) {
-    cout << "Enter Start Point: ";
-    cin.ignore(); // To clear the return character from the buffer
-    getline(cin, startPoint);
-
-    cout << "Enter End Point: ";
-    getline(cin, endPoint);
-
-    cout << endl;
-}
-*/
-
 int main() {
     int mode, algorithm;
-    string startPoint, endPoint; //Stored as addresses?
+    string startPoint, endPoint; // Entered as addresses and stores as coordinates
 
     // Title + style
     string authors = "Designed by Camila Djurinsky Zapolski, Pietro Landell, and Ethan Wilson";
@@ -178,26 +163,18 @@ int main() {
     cout << setw((80 + authors.length()) / 2) << authors << endl;
     cout << endl;
 
+    // Gather all info requires to run algorithms
     mode = getTransportationMode();
     algorithm = getSearchAlgorithm();
-
     string coords = getStartAndEndPoints(API_KEY);
-
-    cout << coords << endl;
-    
-
-    /*
-    // For test/debug
-    cout << endl;
-    cout << "Here's the following inputs:" << endl;
-    cout << "Mode: " << mode << endl << "Algorithm: " << algorithm << endl;
-    cout << "Start Point: " << startPoint << endl << "End Point: " << endPoint << endl;
-    cout << endl;
-    */
 
     cout << "Finding the shortest path..." << endl << endl;
 
-    // Add  shortest path finding code here
+    /*
+     *
+     *  Implement rest of the code here.
+     *
+     */
 
     return 0;
 }
