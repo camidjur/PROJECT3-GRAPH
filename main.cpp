@@ -94,6 +94,8 @@ string getStartAndEndPoints(const string &apiKey) {
     pair<double, double> startCoords, endCoords;
     string result;
 
+    cout << "Enter the address in the format: Street Number, Street Name, City, State, Country." << endl;
+    cout << "Example: '123 Main St, Gainesville, FL, USA'" << endl;
     cout << "Enter Start Point Address: ";
     cin.ignore(); // To clear the return character from the buffer to be safe
     getline(cin, startAddress);
