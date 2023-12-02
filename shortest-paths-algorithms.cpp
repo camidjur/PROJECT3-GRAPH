@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <limits>
+#include "data.cpp"
 using namespace std;
 // AUTHOR: CAMILA DJURINSKY ZAPOLSKI
 
@@ -18,98 +19,111 @@ using namespace std;
 // speeds ranging from 10 to 30 based on traffic, stops, and routes
 #define mphBus 20;
 
+// Creates a hash function to be able to handle finding latitude and longitude
+namespace std {
+    template <>
+    struct hash<Coordinate> {
+        size_t operator()(const Coordinate& coord) const {
+            return hash<double>()(coord.latitude) ^ (hash<double>()(coord.longitude) << 1);
+        }
+    };
+}
+
 //modeOfT will be one of the following:
 // 1 walking, 2 biking, 3 car 4 bus
-void statements(int weight, int modeOfT, int source, int target){
+void statements(double weight, int modeOfT, Coordinate source, Coordinate target){
     /* The purpose of this function is to create consistency within the statements that
      * will be printed for each path query, for both Dijkstra's and Bellman Ford's algorithms.
      */
-    cout << "The shortest distance from vertex: " << source << " to vertex: " << target << " is " << weight << " miles" << endl;
-    int timeWalking =weight / mphWalking;
-    int timeBiking = weight / mphBiking;
-    int timeCar = weight / mphCar;
-    int timeBus = weight / mphBus;
+    cout << "The shortest distance from vertex: (" << source.latitude << ", " << source.longitude << ") to vertex: (" << target.latitude << ", " << target.longitude << ") is " << weight << " miles" << endl;
+    double timeWalking =weight / mphWalking;
+    double timeBiking = weight / mphBiking;
+    double timeCar = weight / mphCar;
+    double timeBus = weight / mphBus;
 
-    int emissionsCar = weight * CO2inCarperMile;
-    int emissionsBus = weight * CO2inBusperMile;
+    double emissionsCar = weight * CO2inCarperMile;
+    double emissionsBus = weight * CO2inBusperMile;
 
     if(modeOfT == 1){
-        cout << "Walking, this distance should take " << timeWalking << " mph." << endl;
-        cout << "This is " << timeCar / timeWalking << " times slower than driving, "
-        << timeBus / timeWalking << " times slower than taking a bus, and "
-        << timeBiking / timeWalking << " times slower than riding a bike." << endl;
+        cout << "Walking, this distance should take " << setprecision(3) << timeWalking << " hours." << endl;
+        cout << "This is " << timeWalking / timeCar << " times slower than driving, "
+        << timeWalking / timeBus << " times slower than taking a bus, and "
+        << timeWalking / timeBiking << " times slower than riding a bike." << endl;
 
         cout << "Your total gas emissions for this path is: 0 grams" << endl;
     }
     if(modeOfT == 2){
-        cout << "Biking, this distance should take " << timeBiking << " mph." << endl;
-        cout << "This is " << timeCar / timeBiking << " times slower than driving, "
-             << timeBus / timeBiking << " times slower than taking a bus, and "
-             << timeBiking / timeWalking << " times faster than walking." << endl;
+        cout << "Biking, this distance should take " << timeBiking << " hours." << endl;
+        cout << "This is " << timeBiking / timeCar << " times slower than driving, "
+             << timeBiking / timeBus << " times slower than taking a bus, and "
+             << timeWalking / timeBiking << " times faster than walking." << endl;
 
         cout << "Your total gas emissions for this path is: 0 grams" << endl;
     }
     if(modeOfT == 3){
-        cout << "Driving, this distance should take " << timeCar << " mph." << endl;
-        cout << "This is " << timeCar / timeBus << " times faster than taking a bus, "
-             << timeCar / timeBiking << " times faster than riding a bike, and "
-             << timeCar / timeWalking << " times faster than walking." << endl;
+        cout << "Driving, this distance should take " << timeCar << " hours." << endl;
+        cout << "This is " << timeBus / timeCar << " times faster than taking a bus, "
+             << timeBiking / timeCar << " times faster than riding a bike, and "
+             << timeWalking / timeCar << " times faster than walking." << endl;
 
         cout << "Your total gas emissions for this path is: " << emissionsCar << " grams" << endl;
         cout<< "This is " << emissionsCar / emissionsBus << " times more than the emissions of taking a bus and "
-        << emissionsCar << " times more than the emissions of walking or biking." << endl;
+        << emissionsCar << " grams more than the emissions of walking or biking." << endl;
     }
     if(modeOfT == 4){
-        cout << "Taking a bus, this distance should take " << timeBus << " mph." << endl;
-        cout << "This is " << timeCar / timeBus << " times slower than driving, "
-             << timeBus / timeBiking << " times faster than riding a bike, and "
-             << timeBus / timeWalking << " times faster than walking." << endl;
+        cout << "Taking a bus, this distance should take " << timeBus << " hours." << endl;
+        cout << "This is " << timeBus / timeCar << " times slower than driving, "
+             << timeBiking / timeBus << " times faster than riding a bike, and "
+             << timeWalking / timeBus << " times faster than walking." << endl;
 
         cout << "Your total gas emissions for this path is: " << emissionsBus << " grams" << endl;
         cout<< "This is " << emissionsCar / emissionsBus << " times less than the emissions of driving and "
-            << emissionsBus << " times more than the emissions of walking or biking." << endl;
+            << emissionsBus << " grams more than the emissions of walking or biking." << endl;
     }
 
 }
 
-void dijkstra(map<int, vector<pair<int, int>>>& graph, int source, int target, int modeOfT){
+void dijkstra(map<Coordinate, vector<pair<double, Coordinate>>>& graph, int modeOfT, Coordinate source, Coordinate target) {
     /* The purpose of this function is to find the shortest paths to all vertices in the graph,
      * from the source vertex. This will allow us to find the shortest path between two vertices,
      * as long as the starting vertex is the source, when using the weights as markers of distance.
      *
      * The outline of this function was taken from class notes given by Dr. Kapoor, Module 8
      */
-
     // uses a min heap to keep track of min distance between vertices
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-    // vector representation of d[v]
-    // using numeric_limits<int>::max() is equivalent to using infinity
-    vector<int> d(graph.size(), numeric_limits<int>::max());
+    priority_queue<pair<double, Coordinate>, vector<pair<double, Coordinate>>, greater<pair<double, Coordinate>>> pq;
+    // unordered map representation of d[v]
+    unordered_map<Coordinate, double> d;
 
     d[source] = 0; // establishes the source algorithm
 
-    pq.push({source, 0}); // vertex and distance
+    pq.push({0, source}); // vertex and distance
 
-    while(!pq.empty()){ // while we have not visited all the vertices
-        int u = pq.top().first; // gets the source
+    while (!pq.empty()) { // while we have not visited all the vertices
+        Coordinate u = pq.top().second; // gets the source
         pq.pop();
         // will iterate through all the adjacent vertices to u
-        for(const auto entry : graph[u]){
-            int v = entry.first; // destination of edge
-            int weight = entry.second; // weight of edge
+        for (const auto& entry : graph[u]) {
+            Coordinate v = entry.second; // destination of edge
+            double weight = entry.first; // weight of edge
 
-            // relaxes the weights
-            if(d[u] + weight < d[v]){
+            if (d.find(v) == d.end() || d[u] + weight < d[v]) {
                 d[v] = d[u] + weight;
                 // next vertex added to test shortest paths
-                pq.push({v, d[v]});
+                pq.push({d[v], v});
             }
         }
     }
-    int shortestDistance = d[target];
+    double shortestDistance;
+    if (d.find(target) != d.end()) {
+        shortestDistance = d[target];
+    } else {
+        shortestDistance = numeric_limits<double>::infinity();
+    }
     statements(shortestDistance, modeOfT, source, target);
 }
-void bellman(map<int, vector<pair<int, int>>>& graph, int modeOfT, int source, int target){
+
+void bellman(map<Coordinate, vector<pair<double, Coordinate>>>& graph, int modeOfT, Coordinate source, Coordinate target) {
     /* The purpose of this function is to find the shortest paths to all vertices in the graph,
      * allowing for negative weights. This will allow us to find the shortest path between two vertices,
      * as long as there is no negative-weight cycles, when using the weights as markers of distance.
@@ -118,46 +132,59 @@ void bellman(map<int, vector<pair<int, int>>>& graph, int modeOfT, int source, i
      * https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/
      */
 
+    // Get the number of vertices in the graph
+    size_t numVertices = graph.size();
+
     // vector representation of d[v]
     // numeric_limits<int>::max() acts infinity
-    vector<int> d(graph.size(), numeric_limits<int>::max());
-    d[source] = 0;
+    vector<double> d(numVertices, numeric_limits<double>::infinity());
+
+    // Map each vertex to its index in the d array
+    unordered_map<Coordinate, size_t> vertexIndexMap;
+    size_t currentIndex = 0;
+    for (const auto& entry : graph) {
+        vertexIndexMap[entry.first] = currentIndex++;
+    }
+
+    // Find the index of the source vertex
+    auto sourceIt = vertexIndexMap.find(source);
+    size_t sourceIndex = sourceIt->second;
+    d[sourceIndex] = 0; // Set the distance of the source vertex to itself to 0
 
     // bellman ford's iterates |V|-1 times
-    for(int i = 0; i < graph.size()-1; i++){
+    for (size_t i = 0; i < numVertices - 1; i++) {
+        bool relaxationsOccurred = false;
         // had to add an extra for loop to be able to iterate through the map
-        for(const auto entry : graph){
+        for (auto& entry : graph) {
             // source of edge
-            int u = entry.first;
+            Coordinate u = entry.first;
+            // Find the index of the current vertex
+            size_t uIndex = vertexIndexMap[u];
             // iterated through every edge
-            for(const auto edge : entry.second){
-                // destination of edge
-                int v = edge.first;
-                // weight of edge
-                int w = edge.second;
+            for (const auto& edge : entry.second) {
+                Coordinate v = edge.second; // destination of edge
+                double w = edge.first; // weight of edge
+
+                // Find the index of the target vertex
+                size_t vIndex = vertexIndexMap[v];
 
                 // relaxes edges
-                if(d[u] != numeric_limits<int>::max() && d[u] + w < d[v]){
-                    d[v] = d[u] + w;
+                if (d[uIndex] != numeric_limits<double>::infinity() && d[uIndex] + w < d[vIndex]) {
+                    d[vIndex] = d[uIndex] + w;
+                    relaxationsOccurred = true;
                 }
             }
         }
-    }
-    //check for negative cycles - realistically not necessary for this data set
-    // distance is not a negative measurement
-    for(const auto entry : graph){
-        int u = entry.first;
-        for(const auto edge : entry.second){
-            int v = edge.first;
-            int w = edge.second;
-            // repeats same if statement as during relaxation
-            // if this is true, then there has to be a negative-weight cycle
-            if(d[u] != numeric_limits<int>::max() && d[u] + w < d[v]){
-                cout << "There is a negative-weight cycle!" << endl;
-                return;
-            }
+
+        if (!relaxationsOccurred) {
+            break;  // No relaxations occurred, break early to speed up
         }
     }
-    int shortestDistance = d[target];
+
+    // Find the index of the target vertex
+    auto targetIt = vertexIndexMap.find(target);
+    size_t targetIndex = targetIt->second;
+
+    double shortestDistance = d[targetIndex];
     statements(shortestDistance, modeOfT, source, target);
 }
