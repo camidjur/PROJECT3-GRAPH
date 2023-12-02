@@ -1,9 +1,10 @@
-#include <iostream>
 #include <string>
 #include <iomanip>
 #include <utility>
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
+#include <sstream>
+#include "shortest-paths-algorithms.cpp"
 
 using json = nlohmann::json;
 using namespace std;
@@ -169,14 +170,21 @@ int main() {
     mode = getTransportationMode();
     algorithm = getSearchAlgorithm();
     string coords = getStartAndEndPoints(API_KEY);
+    double lat1, lon1, lat2, lon2;
+    std::istringstream iss(coords);
+    iss >> lat1 >> lon1 >> lat2 >> lon2;
+    Coordinate start{lat1, lon1};
+    Coordinate end{lat2, lon2};
 
     cout << "Finding the shortest path..." << endl << endl;
 
-    /*
-     *
-     *  Implement rest of the code here.
-     *
-     */
+    // Make the data
+    std::map<Coordinate, std::vector<std::pair<double, Coordinate>>> data = getGraph(mode);
+    if (algorithm == 1) {
+        bellman(data, mode, start, end);
+    } else {
+        dijkstra(data, mode, start, end);
+    }
 
     return 0;
 }
