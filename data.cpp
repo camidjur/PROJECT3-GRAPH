@@ -28,11 +28,11 @@ double calculateDistance(const Coordinate& coord1, const Coordinate& coord2) {
 std::map<Coordinate, std::vector<std::pair<double, Coordinate>>> getGraph(int mode) {
     std::string file;
     if (mode == 1) {
-        file = "/Users/Pietro/Desktop/COP3530/OSMTrial/data/walking.geojson";
+        file = "/data/walking.geojson";
     } else if (mode == 2) {
-        file = "/Users/Pietro/Desktop/COP3530/OSMTrial/data/biking.geojson";
+        file = "/data/biking.geojson";
     } else {
-        file = "/Users/Pietro/Desktop/COP3530/OSMTrial/data/driving.geojson";
+        file = "/data/drivingorbus.geojson";
     }
     // Open the GeoJSON file
     std::ifstream inputFile(file);
