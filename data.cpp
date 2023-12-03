@@ -1,9 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <cmath>
 #include <map>
-#include <stdexcept>
 
 // Define a structure to represent a coordinate (latitude, longitude) pair
 struct Coordinate {
@@ -28,11 +26,11 @@ double calculateDistance(const Coordinate& coord1, const Coordinate& coord2) {
 std::map<Coordinate, std::vector<std::pair<double, Coordinate>>> getGraph(int mode) {
     std::string file;
     if (mode == 1) {
-        file = "/data/walking.geojson";
+        file = "../data/walking.geojson";
     } else if (mode == 2) {
-        file = "/data/biking.geojson";
+        file = "../data/biking.geojson";
     } else {
-        file = "/data/drivingorbus.geojson";
+        file = "../data/driving.geojson";
     }
     // Open the GeoJSON file
     std::ifstream inputFile(file);
