@@ -17,6 +17,7 @@ using namespace std;
 #define mphBus 20;
 
 // Creates a hash function to be able to handle finding latitude and longitude
+// author : Pietro Landell
 namespace std {
     template <>
     struct hash<Coordinate> {
