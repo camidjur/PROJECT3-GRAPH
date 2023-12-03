@@ -1,6 +1,3 @@
-#include <iostream>
-#include <map>
-#include <vector>
 #include <queue>
 #include <limits>
 #include "data.cpp"
@@ -30,13 +27,13 @@ namespace std {
 }
 
 //modeOfT will be one of the following:
-// 1 walking, 2 biking, 3 car, 4 bus
+// 1 walking, 2 biking, 3 car 4 bus
 void statements(double weight, int modeOfT, Coordinate source, Coordinate target){
     /* The purpose of this function is to create consistency within the statements that
      * will be printed for each path query, for both Dijkstra's and Bellman Ford's algorithms.
      */
     cout << "The shortest distance from vertex: (" << source.latitude << ", " << source.longitude << ") to vertex: (" << target.latitude << ", " << target.longitude << ") is " << weight << " miles" << endl;
-    double timeWalking = weight / mphWalking;
+    double timeWalking =weight / mphWalking;
     double timeBiking = weight / mphBiking;
     double timeCar = weight / mphCar;
     double timeBus = weight / mphBus;
@@ -53,7 +50,7 @@ void statements(double weight, int modeOfT, Coordinate source, Coordinate target
         cout << "Your total gas emissions for this path is: 0 grams" << endl;
     }
     if(modeOfT == 2){
-        cout << "Biking, this distance should take " << setprecision(3) << timeBiking << " hours." << endl;
+        cout << "Biking, this distance should take " << timeBiking << " hours." << endl;
         cout << "This is " << timeBiking / timeCar << " times slower than driving, "
              << timeBiking / timeBus << " times slower than taking a bus, and "
              << timeWalking / timeBiking << " times faster than walking." << endl;
@@ -61,7 +58,7 @@ void statements(double weight, int modeOfT, Coordinate source, Coordinate target
         cout << "Your total gas emissions for this path is: 0 grams" << endl;
     }
     if(modeOfT == 3){
-        cout << "Driving, this distance should take " << setprecision(3) << timeCar << " hours." << endl;
+        cout << "Driving, this distance should take " << timeCar << " hours." << endl;
         cout << "This is " << timeBus / timeCar << " times faster than taking a bus, "
              << timeBiking / timeCar << " times faster than riding a bike, and "
              << timeWalking / timeCar << " times faster than walking." << endl;
@@ -71,7 +68,7 @@ void statements(double weight, int modeOfT, Coordinate source, Coordinate target
         << emissionsCar << " grams more than the emissions of walking or biking." << endl;
     }
     if(modeOfT == 4){
-        cout << "Taking a bus, this distance should take " << setprecision(3) << timeBus << " hours." << endl;
+        cout << "Taking a bus, this distance should take " << timeBus << " hours." << endl;
         cout << "This is " << timeBus / timeCar << " times slower than driving, "
              << timeBiking / timeBus << " times faster than riding a bike, and "
              << timeWalking / timeBus << " times faster than walking." << endl;
@@ -90,6 +87,7 @@ void dijkstra(map<Coordinate, vector<pair<double, Coordinate>>>& graph, int mode
      *
      * The outline of this function was taken from class notes given by Dr. Kapoor, Module 8
      */
+
     // uses a min heap to keep track of min distance between vertices
     priority_queue<pair<double, Coordinate>, vector<pair<double, Coordinate>>, greater<pair<double, Coordinate>>> pq;
     // unordered map representation of d[v]
