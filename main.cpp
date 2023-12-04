@@ -101,6 +101,8 @@ int main() {
     std::map<Coordinate, std::vector<std::pair<double, Coordinate>>> data = getGraph(mode);
     algorithm = getSearchAlgorithm();
     // calls for input
+    cout << "Latitudes must be in the range of 29.5472 and 29.7327." << endl;
+    cout << "Longitudes must be in the range of -82.5234 and -82.2388." << endl;
     getStartAndEndPoints(startPoint, endPoint);
 
     // wait for valid input if initial input was not in data set 
